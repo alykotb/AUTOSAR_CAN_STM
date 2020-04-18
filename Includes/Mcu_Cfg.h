@@ -1,9 +1,3 @@
-/*
- * Mcu_Cfg.h
- *
- *  Created on: May 5, 2018
- *      Author: Ahmed Usama Khalifa
- */
 
 #ifndef INCLUDES_MCU_CFG_H_
 #define INCLUDES_MCU_CFG_H_

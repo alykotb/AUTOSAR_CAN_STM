@@ -1,9 +1,3 @@
-/*
- * Can_GeneralTypes.h
- *
- *  Created on: May 3, 2018
- *      Author: Ahmed Usama Khalifa
- */
 
 /*[SWS_CAN_00487] The types specified in Can_GeneralTypes shall be declared in Can_GeneralTypes.h */
 /*[SWS_Can_00439]�The content of Can_GeneralTypes.h shall be protected by a CAN_GENERAL_TYPES define. */

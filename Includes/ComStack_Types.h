@@ -1,9 +1,4 @@
-/*
- * ComStack_Types.h
- *
- *  Created on: May 3, 2018
- *      Author: Ahmed Usama Khalifa
- */
+
 
 #ifndef INCLUDES_COMSTACK_TYPES_H_
 #define INCLUDES_COMSTACK_TYPES_H_

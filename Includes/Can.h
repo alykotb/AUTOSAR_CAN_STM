@@ -1,8 +1,3 @@
-/*
- * Can.h
- *
- *  Created on: May 3, 2018
- */
 
 #ifndef INCLUDES_CAN_H_
 #define INCLUDES_CAN_H_
