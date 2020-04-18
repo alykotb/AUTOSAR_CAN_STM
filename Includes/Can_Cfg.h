@@ -204,7 +204,7 @@
 #define  CanWakeupProcessing0  0U
 #define  CanWakeupFunctionalityAPI0 1U
 #define  CanWakeupSupport0 1U
-#define  CONTROLLER0_STARTMODE_INT_ENABLE 0x0U
+#define  CONTROLLER0_STARTMODE_INT_ENABLE 0x1840DU
 #define  CONTROLLER0_SLEEPMODE_INT_ENABLE 0x10002U
 
 #define  CanTxProcessing1 0U
