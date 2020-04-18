@@ -12,7 +12,7 @@
 #define  CanMainFunctionBusoffPeriod (float32)(0.05)
 #define  CanMainFunctionModePeriod (float32)(0.05)
 #define  CanMainFunctionWakeupPeriod (float32)(0.05)
-#define  CanMultiplexedTransmission 1U
+#define  CanMultiplexedTransmission 0U
 #define  CanPublicIcomSupport       0U
 #define  CanSetBaudrateApi 1U
 #define  CanTimeoutDuration (float32)(0.05)
