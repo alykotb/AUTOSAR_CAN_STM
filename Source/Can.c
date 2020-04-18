@@ -1372,123 +1372,123 @@ uint8_t return_value0;
 
             if(Controller0_MailBoxes_semaphore[Mailbox_index]== confirmed)
             {
+            	Controller0_MailBoxes_semaphore[Mailbox_index]= un_confirmed;
+
 				/*Mailbox_index=HTH_To_MailBoxes_Map[Hth].Busy_Mailboxes_Num+HTH_To_MailBoxes_Map[Hth].Starting_Mailbox;
 				 HTH_To_MailBoxes_Map[Hth].Busy_Mailboxes_Num++;*/
             	can_ip=CAN1;
 #if CanMultiplexedTransmission
-      for(j=Mailbox_index;j<=2;j++)
+      for(j=Mailbox_index+1;j<=2;j++)
       {
-    	 if((can_ip->sTxMailBox[j+1].TIR&CAN_ID_EXT)==CAN_ID_EXT)
+    	 if((can_ip->sTxMailBox[j].TIR&CAN_ID_EXT)==CAN_ID_EXT)
     	 {
-    		   if(PduInfo->id==(can_ip->sTxMailBox[j+1].TIR>>CAN_TI0R_EXID_Pos))
+    		   if(PduInfo->id==(can_ip->sTxMailBox[j].TIR>>CAN_TI0R_EXID_Pos))
     		    	  {
 
     			        switch(Mailbox_index)
     			        {
     			          case MailBox0:
-    			        	  CAN0_TSR_R|=CAN_TSR_ABRQ0;
-    			        	  if ((CAN_TSR_TXOK0 & CAN0_TSR_R) != 0U)
+    			        	  CAN0_TSR_R|=CAN_TSR_ABRQ1;/*abort previous mailbox*/
+    			        	  if ((CAN_TSR_TXOK1 & CAN0_TSR_R) != 0U)
     			        	  {
 
     			        	  }else{
-								    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
+
+    			        		  if(Controller0_MailBoxes_semaphore[j]==un_confirmed)
+    			        	       {
+								    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
 									can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-									Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j+1];
-									Mailbox_index=j+1;
+									Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j];
+									Mailbox_index+=1;/*MISRA*/
+    			        	       }else{
+
+    			        	            }
 							      }
 							  break;
     			          case MailBox1:
-    			        	  CAN0_TSR_R|=CAN_TSR_ABRQ1;
-    			        	  if ((CAN_TSR_TXOK1 & CAN0_TSR_R) != 0U)
-								  {
-
-								  }else{
-									    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-										can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-										can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-										can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
-										can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-										Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j+1];
-										Mailbox_index=j+1;
-								      }
-    			               break;
-    			          case MailBox2:
-    			        	  CAN0_TSR_R|=CAN_TSR_ABRQ2;
+    			        	  CAN0_TSR_R|=CAN_TSR_ABRQ2;/*aborting previous mailbox*/
     			        	  if ((CAN_TSR_TXOK2 & CAN0_TSR_R) != 0U)
 								  {
 
 								  }else{
-									    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-										can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-										can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-										can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
+
+									  if(Controller0_MailBoxes_semaphore[j]==un_confirmed)
+							          {
+									    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+										can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+										can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+										can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
 										can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-										Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j+1];
-										Mailbox_index=j+1;
+										Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j];
+										Mailbox_index+=1;
+							          }else
+										  {
+                                              /*MISRA*/
+										  }
 								      }
-    			        	  break;
+    			               break;
+
     			        }
     		    	  }
     	 }
     	 else{
-    		    if(PduInfo->id==(can_ip->sTxMailBox[j+1].TIR>>CAN_TI0R_STID_Pos))
+    		    if(PduInfo->id==(can_ip->sTxMailBox[j].TIR>>CAN_TI0R_STID_Pos))
     		      {    switch(Mailbox_index)
 			        {
 			          case MailBox0:
-			        	  CAN0_TSR_R|=CAN_TSR_ABRQ0;
-			        	  if ((CAN_TSR_TXOK0 & CAN0_TSR_R) != 0U)
+			        	  CAN0_TSR_R|=CAN_TSR_ABRQ1;
+			        	  if ((CAN_TSR_TXOK1 & CAN0_TSR_R) != 0U)
 						  {
 
+
 						  }else{
-								can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-								can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-								can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-								can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
+
+							    if(Controller0_MailBoxes_semaphore[j]==un_confirmed)
+							    {
+								can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+								can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+								can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+								can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
 								can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-								Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j+1];
-								Mailbox_index=j+1;
+								Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j];
+								Mailbox_index+=1;
+							    }
+							    else{
+							    	 /*MISRA*/
+							        }
 							  }
 						  break;
 			          case MailBox1:
-			        	  CAN0_TSR_R|=CAN_TSR_ABRQ1;
-			        	  if ((CAN_TSR_TXOK1 & CAN0_TSR_R) != 0U)
+			        	  CAN0_TSR_R|=CAN_TSR_ABRQ2;
+			        	  if ((CAN_TSR_TXOK2 & CAN0_TSR_R) != 0U)
 							  {
 
 							  }else{
-									can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
-									can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-									Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j+1];
-									Mailbox_index=j+1;
-								  }
-			               break;
-			          case MailBox2:
-			        	  CAN0_TSR_R|=CAN_TSR_ABRQ2;
-			        	  if ((CAN_TSR_TXOK2 & CAN0_TSR_R) != 0U)
-						  {
 
-						  }else{
-								can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-								can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-								can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-								can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
-								can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-								Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j+1];
-								Mailbox_index=j+1;
-							  }
-			        	  break;
+								  if(Controller0_MailBoxes_semaphore[j]==un_confirmed)
+						          {
+									can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
+									can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
+									Controller0_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j];
+									Mailbox_index+=1;
+								  }else{
+
+								       }
+			               break;
 			        }
 
     		      }
     	     }
     	  }
+      }
 #endif
-            	Controller0_MailBoxes_semaphore[Mailbox_index]= un_confirmed;
+
 				Controller0_MailBox_Pending_PduId[Mailbox_index]=PduInfo->swPduHandle;
 
 			  	can_ip->sTxMailBox[Mailbox_index].TDTR =PduInfo->length;
@@ -1566,123 +1566,123 @@ uint8_t return_value0;
 					 can_ip=CAN2;
 						if(Controller1_MailBoxes_semaphore[Mailbox_index]== confirmed)
 						{
+							Controller1_MailBoxes_semaphore[Mailbox_index]= un_confirmed;
 #if CanMultiplexedTransmission
-      for(j=Mailbox_index;j<=2;j++)
+      for(j=Mailbox_index+1;j<2;j++)
       {
-    	 if(can_ip->sTxMailBox[j+1].TIR&CAN_ID_EXT==CAN_ID_EXT)
+    	 if((can_ip->sTxMailBox[j].TIR&CAN_ID_EXT)==CAN_ID_EXT)
     	 {
-    		   if(PduInfo->id==(can_ip->sTxMailBox[j+1].TIR>>CAN_TI0R_EXID_Pos))
+    		   if(PduInfo->id==(can_ip->sTxMailBox[j].TIR>>CAN_TI0R_EXID_Pos))
     		    	  {
 
     			        switch(Mailbox_index)
     			        {
     			          case MailBox0:
-    			        	  CAN1_TSR_R|=CAN_TSR_ABRQ0;
-    			        	  if ((CAN_TSR_TXOK0 & CAN1_TSR_R) != 0U)
+    			        	  CAN1_TSR_R|=CAN_TSR_ABRQ1;/*abort previous mailbox*/
+    			        	  if ((CAN_TSR_TXOK1 & CAN0_TSR_R) != 0U)
     			        	  {
-    			        		  Controller1_MailBoxes_semaphore[j+1]=confirmed;
+
     			        	  }else{
-								    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
+
+    			        		  if(Controller1_MailBoxes_semaphore[j]==un_confirmed)
+    			        	       {
+								    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
 									can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-									Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j+1];
-									Mailbox_index=j+1;
+									Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller0_MailBox_Pending_PduId[j];
+									Mailbox_index+=1;/*MISRA*/
+    			        	       }else{
+
+    			        	            }
 							      }
 							  break;
     			          case MailBox1:
-    			        	  CAN1_TSR_R|=CAN_TSR_ABRQ1;
-    			        	  if ((CAN_TSR_TXOK1 & CAN1_TSR_R) != 0U)
+    			        	  CAN1_TSR_R|=CAN_TSR_ABRQ2;/*aborting previous mailbox*/
+    			        	  if ((CAN_TSR_TXOK2 & CAN0_TSR_R) != 0U)
 								  {
-    			        		     Controller1_MailBoxes_semaphore[j+1]= confirmed;
+
 								  }else{
-									    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-										can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-										can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-										can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
+
+									  if(Controller1_MailBoxes_semaphore[j]==un_confirmed)
+							          {
+									    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+										can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+										can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+										can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
 										can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-										Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j+1];
-										Mailbox_index=j+1;
+										Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j];
+										Mailbox_index+=1;
+							          }else
+										  {
+                                              /*MISRA*/
+										  }
 								      }
     			               break;
-    			          case MailBox2:
-    			        	  CAN1_TSR_R|=CAN_TSR_ABRQ2;
-    			        	  if ((CAN_TSR_TXOK2 & CAN1_TSR_R) != 0U)
-								  {
-    			        		          Controller1_MailBoxes_semaphore[j+1]= confirmed;
-								  }else{
-									    can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-										can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-										can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-										can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
-										can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-										Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j+1];
-										Mailbox_index=j+1;
-								      }
-    			        	  break;
+
     			        }
     		    	  }
     	 }
     	 else{
-    		    if(PduInfo->id==(can_ip->sTxMailBox[j+1].TIR>>CAN_TI0R_STID_Pos))
+    		    if(PduInfo->id==(can_ip->sTxMailBox[j].TIR>>CAN_TI0R_STID_Pos))
     		      {    switch(Mailbox_index)
 			        {
 			          case MailBox0:
-			        	  CAN1_TSR_R|=CAN_TSR_ABRQ0;
-			        	  if ((CAN_TSR_TXOK0 & CAN1_TSR_R) != 0U)
+			        	  CAN1_TSR_R|=CAN_TSR_ABRQ1;
+			        	  if ((CAN_TSR_TXOK1 & CAN1_TSR_R) != 0U)
 						  {
-								  Controller1_MailBoxes_semaphore[j+1]= confirmed;
+
+
 						  }else{
-								can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-								can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-								can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-								can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
+
+							    if(Controller1_MailBoxes_semaphore[j]==un_confirmed)
+							    {
+								can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+								can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+								can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+								can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
 								can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-								Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j+1];
-								Mailbox_index=j+1;
+								Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j];
+								Mailbox_index+=1;
+							    }
+							    else{
+							    	 /*MISRA*/
+							        }
 							  }
 						  break;
 			          case MailBox1:
-			        	  CAN1_TSR_R|=CAN_TSR_ABRQ1;
-			        	  if ((CAN_TSR_TXOK1 & CAN1_TSR_R) != 0U)
-							  {
-									  Controller1_MailBoxes_semaphore[j+1]= confirmed;
-							  }else{
-									can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
-									can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-									Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j+1];
-									Mailbox_index=j+1;
-								  }
-			               break;
-			          case MailBox2:
 			        	  CAN1_TSR_R|=CAN_TSR_ABRQ2;
 			        	  if ((CAN_TSR_TXOK2 & CAN1_TSR_R) != 0U)
-						  {
-								  Controller1_MailBoxes_semaphore[j+1]= confirmed;
-						  }else{
-								can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j+1].TIR;
-								can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j+1].TDLR;
-								can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j+1].TDTR;
-								can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j+1].TDHR;
-								can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
-								Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j+1];
-								Mailbox_index=j+1;
+							  {
 
-							  }
-			        	  break;
+							  }else{
+
+								  if(Controller1_MailBoxes_semaphore[j]==un_confirmed)
+						          {
+									can_ip->sTxMailBox[Mailbox_index].TIR =can_ip->sTxMailBox[j].TIR;
+									can_ip->sTxMailBox[Mailbox_index].TDLR=can_ip->sTxMailBox[j].TDLR;
+									can_ip->sTxMailBox[Mailbox_index].TDTR=can_ip->sTxMailBox[j].TDTR;
+									can_ip->sTxMailBox[Mailbox_index].TDHR=can_ip->sTxMailBox[j].TDHR;
+									can_ip->sTxMailBox[Mailbox_index].TIR|= CAN_TI0R_TXRQ;
+									Controller1_MailBox_Pending_PduId[Mailbox_index]=Controller1_MailBox_Pending_PduId[j];
+									Mailbox_index+=1;
+								  }else{
+
+								       }
+			               break;
 			        }
 
     		      }
     	     }
     	  }
+      }
 #endif
 					        /*Mailbox_index=HTH_To_MailBoxes_Map[Hth].Busy_Mailboxes_Num+HTH_To_MailBoxes_Map[Hth].Starting_Mailbox;
 					         HTH_To_MailBoxes_Map[Hth].Busy_Mailboxes_Num++;*/
+
 				 	        Controller1_MailBoxes_semaphore[Mailbox_index]= un_confirmed;
+
 							Controller1_MailBox_Pending_PduId[Mailbox_index]=PduInfo->swPduHandle;
 							can_ip->sTxMailBox[Mailbox_index].TDTR =PduInfo->length;
 				 switch(CanContainer.CanConfigSet.CanHardwareObject[Hth].CanIdType)
@@ -2792,7 +2792,7 @@ void Can1_TX_InterruptHandler()
 			}
 #endif
 #if (Controller1_MailBox1==ON)
-	  if ((TX0_STATUS & CAN_TSR_TXOK1) != 0U)
+	  if ((TX1_STATUS & CAN_TSR_TXOK1) != 0U)
 	 	    {
 		        CAN1_TSR_R=MailBox1_INT_CLEAR_FLAG;/*clearing the interrupt flag*/
 		        Controller1_MailBoxes_semaphore[MailBox1]= confirmed;
@@ -2801,7 +2801,7 @@ void Can1_TX_InterruptHandler()
 	 	    }
 #endif
 #if (Controller1_MailBox2==ON)
-	  if ((TX0_STATUS & CAN_TSR_TXOK2) != 0U)
+	  if ((TX1_STATUS & CAN_TSR_TXOK2) != 0U)
 	 	 	{
 		        CAN1_TSR_R=MailBox2_INT_CLEAR_FLAG;/*clearing the interrupt flag*/
 		        Controller1_MailBoxes_semaphore[MailBox2]= confirmed;
